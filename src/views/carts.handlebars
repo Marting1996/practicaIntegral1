@@ -1,0 +1,69 @@
+<h2>Carts</h2>
+<ul>
+    <li>
+        <a href="/api/products">Products</a>
+    </li>
+    <li>
+        <a href="#" onclick="createCart()">Crear Carrito</a>
+    </li>
+    <li>
+        <a href="/chat">Chat</a>
+    </li>
+</ul>
+
+<hr>
+
+<table border="1">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Title</td>
+            <td>Quantity</td>
+            <td>Eliminar</td>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each carts}}
+        <tr>
+            <td>{{this._id}}</td>
+            <td>
+                {{#each this.products}}
+                    {{this.title}}<br>
+                {{/each}}
+            </td>
+            <td>
+                {{#each this.products}}
+                    {{this.quantity}}<br>
+                {{/each}}
+            </td>
+            <td>
+                <button onclick="deleteCart('{{this._id}}')">Eliminar</button>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<script>
+    function createCart() {
+        fetch("/api/carts", {
+            method: "POST"
+        })
+    }
+    function deleteCart(cartId) {
+            console.log("Eliminar carrito con ID:", cartId);
+        fetch(`/api/carts/${cartId}`, {
+            method: "DELETE"
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Carrito eliminado correctamente");
+            } else {
+                console.error("Error al eliminar el carrito:", response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error("Error al eliminar el carrito:", error);
+        });
+    }
+</script>

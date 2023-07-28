@@ -1,0 +1,92 @@
+<h2>Products</h2>
+<ul>
+    <li>
+        <a href="/realtimeproducts">Create products</a>
+    </li>
+    <li>
+        <a href="/api/carts">Carts</a>
+    </li>
+    <li>
+        <a href="/chat">Chat</a>
+    </li>
+</ul>
+
+<hr>
+
+<table border="1">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>Title</td>
+            <td>Description</td>
+            <td>Price</td>
+            <td>Cantidad</td>
+            <td>ID del carrito</td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each products}}
+        <tr>
+            <td>{{this._id}}</td>
+            <td>{{this.title}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.price}}</td>
+            <td>
+                <input type="text" id="cartId_{{this._id}}" placeholder="ID del carrito">
+            </td>
+            <td>
+                <button onclick="addToCart('{{this._id}}')">Add to Cart</button>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<script>
+    async function addToCart(pid) {
+        const cartId = document.getElementById(`cartId_${pid}`).value; 
+
+        if (!cartId) {
+            console.error("Debes proporcionar el ID del carrito.");
+            return;
+        }
+
+        fetch(`/api/carts/${cartId}/product/${pid}`, {
+            method: "GET"
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Producto agregado al carrito correctamente");
+            } else {
+                console.error("Error al agregar el producto al carrito:");
+            }
+        })
+        .catch(error => {
+            console.error("Error al agregar el producto al carrito:", error);
+        });
+    }
+</script>
+
+<script>
+    async function createCart() {
+        fetch("/api/carts", {
+            method: "POST"
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Carrito creado correctamente");
+                return response.json(); 
+            } else {
+                console.error("Error al crear el carrito:");
+            }
+        })
+        .then(data => {
+            console.log("Datos de los carritos:", data);
+        })
+        .catch(error => {
+            console.error("Error al crear el carrito:", error);
+        });
+    }
+</script>
+
